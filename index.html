@@ -1,18 +1,805 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCRC - Reservas</title>
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Reserva de Chromebooks
+    </title>
+
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 
 <body>
 
-    <h1>SCRC - Reservas de Chromebooks</h1>
 
-    <p id="status">Testando aplicação...</p>
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
 
-    <script type="module" src="/js/teste.js"></script>
+<nav
+    class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm"
+>
+
+    <div class="container">
+
+
+        <a
+            class="navbar-brand d-flex align-items-center gap-2"
+            href="#"
+        >
+
+            <i class="bi bi-laptop"></i>
+
+            Reserva de Chromebooks
+
+        </a>
+
+
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+        >
+
+            <span
+                class="navbar-toggler-icon"
+            ></span>
+
+        </button>
+
+
+        <div
+            class="collapse navbar-collapse"
+            id="navbarContent"
+        >
+
+            <div
+                class="ms-auto
+                       d-flex
+                       align-items-center
+                       gap-3
+                       mt-3
+                       mt-lg-0"
+            >
+
+
+                <div
+                    class="text-white
+                           d-flex
+                           align-items-center
+                           gap-2"
+                >
+
+                    <i
+                        class="bi bi-person-circle fs-5"
+                    ></i>
+
+
+                    <span
+                        id="currentUserDisplay"
+                    >
+                        Carregando...
+                    </span>
+
+                </div>
+
+
+                <span
+                    id="currentUserRoleDisplay"
+                    class="badge bg-light text-primary"
+                >
+                    ...
+                </span>
+
+
+                <button
+                    id="btnNewUser"
+                    class="btn btn-outline-light btn-sm d-none"
+                    data-bs-toggle="modal"
+                    data-bs-target="#newUserModal"
+                >
+
+                    <i
+                        class="bi bi-person-plus"
+                    ></i>
+
+                    Novo Usuário
+
+                </button>
+
+
+                <button
+                    id="btnLogout"
+                    class="btn btn-light btn-sm text-primary fw-semibold"
+                >
+
+                    <i
+                        class="bi bi-box-arrow-right"
+                    ></i>
+
+                    Sair
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+
+<!-- =====================================================
+     CONTEÚDO
+===================================================== -->
+
+<main
+    class="container my-4"
+>
+
+
+    <!-- =================================================
+         FILTROS
+    ================================================== -->
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+
+                <!-- DATA -->
+
+                <div class="col-md-4">
+
+                    <label
+                        for="filterDate"
+                        class="form-label fw-semibold"
+                    >
+
+                        <i
+                            class="bi bi-calendar-event me-1"
+                        ></i>
+
+                        Data da Reserva
+
+                    </label>
+
+
+                    <input
+                        type="date"
+                        id="filterDate"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- TURMA -->
+
+                <div class="col-md-4">
+
+                    <label
+                        for="filterClass"
+                        class="form-label fw-semibold"
+                    >
+
+                        <i
+                            class="bi bi-people me-1"
+                        ></i>
+
+                        Turma
+
+                    </label>
+
+
+                    <select
+                        id="filterClass"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Carregando turmas...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- PROFESSOR MASTER -->
+
+                <div
+                    id="teacherSelectContainer"
+                    class="col-md-4 d-none"
+                >
+
+                    <label
+                        for="filterTeacher"
+                        class="form-label fw-semibold"
+                    >
+
+                        <i
+                            class="bi bi-person-badge me-1"
+                        ></i>
+
+                        Professor
+
+                    </label>
+
+
+                    <select
+                        id="filterTeacher"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Carregando professores...
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =================================================
+         GRADE
+    ================================================== -->
+
+    <div class="row g-4">
+
+
+        <!-- MANHÃ -->
+
+        <div class="col-lg-6">
+
+            <div class="card h-100">
+
+                <div class="card-header bg-light">
+
+                    <h5
+                        class="shift-title mb-0 text-primary"
+                    >
+
+                        <i
+                            class="bi bi-sun-fill text-warning"
+                        ></i>
+
+                        Turno Manhã
+
+                    </h5>
+
+                </div>
+
+
+                <div
+                    id="morningSlotsContainer"
+                    class="card-body d-flex flex-column gap-3"
+                >
+
+                    <div class="loading">
+
+                        Carregando...
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TARDE -->
+
+        <div class="col-lg-6">
+
+            <div class="card h-100">
+
+                <div class="card-header bg-light">
+
+                    <h5
+                        class="shift-title mb-0 text-primary"
+                    >
+
+                        <i
+                            class="bi bi-sunset-fill"
+                            style="color:#fd7e14"
+                        ></i>
+
+                        Turno Tarde
+
+                    </h5>
+
+                </div>
+
+
+                <div
+                    id="afternoonSlotsContainer"
+                    class="card-body d-flex flex-column gap-3"
+                >
+
+                    <div class="loading">
+
+                        Carregando...
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =====================================================
+     MODAL NOVA RESERVA
+===================================================== -->
+
+<div
+    class="modal fade"
+    id="reservationModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i
+                        class="bi bi-laptop text-primary me-2"
+                    ></i>
+
+                    Nova Reserva
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <form id="reservationForm">
+
+                <div class="modal-body">
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Data
+                        </label>
+
+                        <input
+                            type="text"
+                            id="reservationDate"
+                            class="form-control"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Horário
+                        </label>
+
+                        <input
+                            type="text"
+                            id="reservationLesson"
+                            class="form-control"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Turma
+                        </label>
+
+                        <input
+                            type="text"
+                            id="reservationClass"
+                            class="form-control"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div
+                        id="reservationTeacherContainer"
+                        class="mb-3 d-none"
+                    >
+
+                        <label class="form-label fw-semibold">
+                            Professor
+                        </label>
+
+                        <input
+                            type="text"
+                            id="reservationTeacher"
+                            class="form-control"
+                            readonly
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            class="form-label fw-semibold"
+                        >
+
+                            Quantidade de Chromebooks
+
+                        </label>
+
+
+                        <div class="quantity-control">
+
+                            <button
+                                type="button"
+                                id="btnQuantityMinus"
+                                class="btn btn-outline-secondary"
+                            >
+
+                                <i class="bi bi-dash"></i>
+
+                            </button>
+
+
+                            <input
+                                type="number"
+                                id="reservationQuantity"
+                                class="form-control"
+                                value="1"
+                                min="1"
+                                max="12"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                id="btnQuantityPlus"
+                                class="btn btn-outline-secondary"
+                            >
+
+                                <i class="bi bi-plus"></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="quantityHelp"
+                            class="form-text text-center mt-2"
+                        >
+
+                            Máximo:
+                            <strong>12</strong>
+                            Chromebooks por professor
+                            em cada horário.
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="reservationError"
+                        class="alert alert-danger d-none"
+                    ></div>
+
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="btnSaveReservation"
+                        class="btn btn-primary"
+                    >
+
+                        <i
+                            class="bi bi-check-circle"
+                        ></i>
+
+                        Confirmar Reserva
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     MODAL NOVO USUÁRIO
+===================================================== -->
+
+<div
+    class="modal fade"
+    id="newUserModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+
+                    <i
+                        class="bi bi-person-plus text-primary me-2"
+                    ></i>
+
+                    Novo Usuário
+
+                </h5>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <form id="newUserForm">
+
+                <div class="modal-body">
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="userName"
+                            class="form-label"
+                        >
+                            Nome
+                        </label>
+
+                        <input
+                            type="text"
+                            id="userName"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="userEmail"
+                            class="form-label"
+                        >
+                            E-mail
+                        </label>
+
+                        <input
+                            type="email"
+                            id="userEmail"
+                            class="form-control"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="userPassword"
+                            class="form-label"
+                        >
+                            Senha inicial
+                        </label>
+
+                        <input
+                            type="password"
+                            id="userPassword"
+                            class="form-control"
+                            minlength="6"
+                            required
+                        >
+
+                        <div class="form-text">
+
+                            Mínimo de 6 caracteres.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="userRole"
+                            class="form-label"
+                        >
+                            Perfil
+                        </label>
+
+                        <select
+                            id="userRole"
+                            class="form-select"
+                        >
+
+                            <option value="false">
+                                Professor
+                            </option>
+
+                            <option value="true">
+                                Master
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div
+                        id="newUserError"
+                        class="alert alert-danger d-none"
+                    ></div>
+
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        id="btnSaveUser"
+                        class="btn btn-primary"
+                    >
+
+                        <i
+                            class="bi bi-person-plus"
+                        ></i>
+
+                        Criar Usuário
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<footer
+    class="footer py-3 text-center text-muted"
+>
+
+    <small>
+
+        Sistema de Reserva de Chromebooks
+        © 2026
+
+    </small>
+
+</footer>
+
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+<script
+    type="module"
+    src="/js/app.js"
+></script>
+
 
 </body>
+
 </html>
